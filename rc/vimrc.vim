@@ -69,6 +69,7 @@ inoremap <F1> <Esc>:help <C-r><C-w><CR>
 
 " new line
 nnoremap <Space><CR> :<C-u>call append(expand('.'), '')<CR>j
+inoremap <S-CR> <Esc>:call append(expand('.'), '')<CR>ji
 
 " move
 for key in ['j', 'k', 'gg', 'G', '{', '}', '[', ']', '[(', '])',
