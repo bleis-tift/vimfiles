@@ -8,7 +8,7 @@ set lines=40
 
 colorscheme wombat
 try
-    set guifont=うずらフォント:h14
+    set guifont=ゆたぽん（コーディング）Backsl:h12
 catch /.*/
     " do nothing
 endtry
