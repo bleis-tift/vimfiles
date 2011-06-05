@@ -67,6 +67,11 @@ nnoremap <Space>h :<C-u>help<Space>
 nnoremap <F1> :<C-u>help <C-r><C-w><CR>
 inoremap <F1> <Esc>:help <C-r><C-w><CR>
 
+" select last changed text
+nnoremap gc `[v`]
+vnoremap gc :<C-u>normal gc<CR>
+onoremap gc :<C-u>normal gc<CR>
+
 " new line
 nnoremap <Space><CR> :<C-u>call append(expand('.'), '')<CR>j
 inoremap <S-CR> <Esc>:call append(expand('.'), '')<CR>ji
