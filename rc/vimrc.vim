@@ -302,13 +302,13 @@ function! CompleteTeX(findstart, base)
         let str = strpart(getline(current - line), 0)
         let pos = match(str, '\\begin{[^}]*}')
         if pos != -1
-            let elem = strpart(str, pos + 7, match(str, '}', pos + 7) - 2)
+            let elem = strpart(str, pos + 7, match(str, '}', pos + 7) - pos - 7)
             let result = { 
                         \ 'word' : '\end{' . elem . '}',
                         \ 'abbr' : elem,
                         \ 'menu' : 'complete tex'
                         \ }
-            return [result, 'hoge', elem]
+            return [result]
         endif
     endfor
     return []
