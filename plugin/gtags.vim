@@ -1,11 +1,11 @@
 " File: gtags.vim
 " Author: Tama Communications Corporation
-" Version: 0.3.2
-" Last Modified: Nov 2, 2010
+" Version: 0.3.4
+" Last Modified: March 6, 2011
 "
 " Copyright and licence
 " ---------------------
-" Copyright (c) 2004, 2008, 2010 Tama Communications Corporation
+" Copyright (c) 2004, 2008, 2010, 2011 Tama Communications Corporation
 "
 " This file is part of GNU GLOBAL.
 "
@@ -213,6 +213,9 @@ if !exists("Gtags_Single_Quote_Char")
         let Gtags_Double_Quote_Char = '"'
     endif
 endif
+if !exists("Gtags_Use_Tags_Format")
+    let Gtags_Use_Tags_Format = 0
+endif
 
 "
 " Display error message.
@@ -311,27 +314,27 @@ function! s:ExecLoad(option, long_option, pattern)
     let isfile = 0
     let option = ''
     let result = ''
-	if a:pattern ==# '<cword>'
-		let pat = expand(a:pattern)
-	else
-		let pat = a:pattern
-	endif
 
     if a:option =~ 'f'
         let isfile = 1
-        if filereadable(pat) == 0
-            call s:Error('File ' . pat . ' not found.')
+        if filereadable(a:pattern) == 0
+            call s:Error('File ' . a:pattern . ' not found.')
             return
         endif
     endif
     if a:long_option != ''
         let option = a:long_option . ' '
     endif
-    let option = option . '-qx' . s:TrimOption(a:option)
-    if isfile == 1
-        let cmd = 'global ' . option . ' ' . pat
+    if g:Gtags_Use_Tags_Format == 1
+	let option = option . '-qt'
     else
-        let cmd = 'global ' . option . 'e ' . g:Gtags_Shell_Quote_Char . pat . g:Gtags_Shell_Quote_Char 
+	let option = option . '-qx'
+    endif
+    let option = option . s:TrimOption(a:option)
+    if isfile == 1
+        let cmd = 'global ' . option . ' ' . a:pattern
+    else
+        let cmd = 'global ' . option . 'e ' . g:Gtags_Shell_Quote_Char . a:pattern . g:Gtags_Shell_Quote_Char 
     endif
 
     let result = system(cmd)
@@ -349,13 +352,13 @@ function! s:ExecLoad(option, long_option, pattern)
     endif
     if result == '' 
         if option =~ 'f'
-            call s:Error('Tag not found in ' . pat . '.')
+            call s:Error('Tag not found in ' . a:pattern . '.')
         elseif option =~ 'P'
-            call s:Error('Path which matches to ' . pat . ' not found.')
+            call s:Error('Path which matches to ' . a:pattern . ' not found.')
         elseif option =~ 'g'
-            call s:Error('Line which matches to ' . pat . ' not found.')
+            call s:Error('Line which matches to ' . a:pattern . ' not found.')
         else
-            call s:Error('Tag which matches to ' . g:Gtags_Shell_Quote_Char . pat . g:Gtags_Shell_Quote_Char . ' not found.')
+            call s:Error('Tag which matches to ' . g:Gtags_Shell_Quote_Char . a:pattern . g:Gtags_Shell_Quote_Char . ' not found.')
         endif
         return
     endif
@@ -365,9 +368,13 @@ function! s:ExecLoad(option, long_option, pattern)
 "        topleft vertical copen
         botright copen
     endif
-    " Parse the output of 'global -x' and show in the quickfix window.
+    " Parse the output of 'global -x or -t' and show in the quickfix window.
     let efm_org = &efm
-    let &efm="%*\\S%*\\s%l%\\s%f%\\s%m"
+    if g:Gtags_Use_Tags_Format == 1
+        let &efm = "%*\\S\t%f\t%l"
+    else
+        let &efm = "%*\\S%*\\s%l%\\s%f%\\s%m"
+    endif
     cexpr! result
     let &efm = efm_org
 endfunction
@@ -391,11 +398,11 @@ function! s:RunGlobal(line)
 
     " If no pattern supplied then get it from user.
     if pattern == '' && option !~ 'P'
-        let g:option = option
+        let s:option = option
         if option =~ 'f'
             let line = input("Gtags for file: ", expand('%'), 'file')
         else
-            let line = input("Gtags for pattern: ", expand('<cword>'), 'custom,CandidateCore')
+            let line = input("Gtags for pattern: ", expand('<cword>'), 'custom,GtagsCandidateCore')
         endif
         let pattern = s:Extract(line, 'pattern')
         if pattern == ''
@@ -411,7 +418,7 @@ endfunction
 "
 function! s:GtagsCursor()
     let pattern = expand("<cword>")
-    let option = "--from-here=" . line('.') . ":" . expand("%")
+    let option = "--from-here=\"" . line('.') . ":" . expand("%") . "\""
     call s:ExecLoad('', option, pattern)
 endfunction
 
@@ -428,22 +435,22 @@ endfunction
 "
 " Custom completion.
 "
-function Candidate(lead, line, pos)
-    let g:option = s:Extract(a:line, 'option')
-    return CandidateCore(a:lead, a:line, a:pos)
+function GtagsCandidate(lead, line, pos)
+    let s:option = s:Extract(a:line, 'option')
+    return GtagsCandidateCore(a:lead, a:line, a:pos)
 endfunction
 
-function CandidateCore(lead, line, pos)
-    if g:option =~ 'P' || g:option =~ 'f'
+function GtagsCandidateCore(lead, line, pos)
+    if s:option =~ 'P' || s:option =~ 'f'
         let opt = '-P'
-        if g:option =~ 'O'
+        if s:option =~ 'O'
             let opt = opt . 'O'
-        elseif g:option =~ 'o'
+        elseif s:option =~ 'o'
             let opt = opt . 'o'
         endif
-    elseif g:option =~ 's'
+    elseif s:option =~ 's'
         let opt = '-cs'
-    elseif g:option =~ 'g'
+    elseif s:option =~ 'g'
         return ''
     else
         let opt = '-c'
@@ -452,7 +459,7 @@ function CandidateCore(lead, line, pos)
 endfunction
 
 " Define the set of Gtags commands
-command! -nargs=* -complete=custom,Candidate Gtags call s:RunGlobal(<q-args>)
+command! -nargs=* -complete=custom,GtagsCandidate Gtags call s:RunGlobal(<q-args>)
 command! -nargs=0 GtagsCursor call s:GtagsCursor()
 command! -nargs=0 Gozilla call s:Gozilla()
 " Suggested map:

@@ -418,9 +418,15 @@ nnoremap <Space>gN :<C-u>w<CR>:Git now --all<CR>
 nnoremap <Space>now :<C-u>w<CR>:Git now<CR>
 
 " gtags.vim settings
+let GtagsCscope_Auto_Load = 0
+function! GtagsRCursor()
+    let pat = expand('<cword>')
+    execute "Gtags -r " . pat
+endfunction
 if globpath(&rtp, 'plugin/gtags.vim') != ''
-    nnoremap <F12> :<C-u>Gtags <cword><CR>
-    nnoremap <S-F12> :<C-u>Gtags -r <cword><CR>
+    nnoremap <F12> :<C-u>GtagsCursor<CR>
+    "nnoremap <S-F12> :<C-u>Gtags -r "<cword>"<CR>
+    nnoremap <S-F12> :<C-u>call GtagsRCursor()<CR>
 endif
 
 " utl.vim
