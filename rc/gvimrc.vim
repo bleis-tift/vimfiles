@@ -1,12 +1,10 @@
 set guioptions-=T
 set guioptions-=m
-set showtabline=2
 set guioptions+=b
 set nowrap
 set mousemodel=extend
 set columns=120
 set lines=40
-set clipboard=unnamed
 
 colorscheme wombat
 try

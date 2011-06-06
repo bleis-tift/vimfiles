@@ -10,6 +10,9 @@ set showcmd
 set showmatch
 set clipboard=unnamed
 set hidden
+set showtabline=2
+set columns=120
+set lines=40
 
 " special character
 set list
