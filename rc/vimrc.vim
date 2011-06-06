@@ -9,6 +9,7 @@ set history=1000
 set showcmd
 set showmatch
 set clipboard=unnamed
+set hidden
 
 " special character
 set list
