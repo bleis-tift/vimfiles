@@ -567,6 +567,7 @@ Bundle 'h1mesuke/unite-outline'
 Bundle 'thinca/vim-unite-history'
 Bundle 'sgur/unite-git_grep'
 Bundle 'sgur/unite-qf'
+Bundle 'kmnk/vim-unite-git'
 
 Bundle 'killerswan/fs.vim'
 
