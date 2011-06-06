@@ -304,17 +304,28 @@ function! CompleteTeX(findstart, base)
     endif
 
     let current = line('.')
+    let level = 0
     for line in range(0, current - 1)
+        " end beginの並びで同一行に出てくるようなものは無視
+        " 同一行に複数回beginが出てくるものとか、複数回endが出てくるようなものも無視
+        " 対応も真面目にとらずに、ネストのレベルでやる
         let str = strpart(getline(current - line), 0)
+        if match(str, '\\end{[^}]*}') != -1
+            let level += 1
+        endif
         let pos = match(str, '\\begin{[^}]*}')
         if pos != -1
-            let elem = strpart(str, pos + 7, match(str, '}', pos + 7) - pos - 7)
-            let result = { 
-                        \ 'word' : '\end{' . elem . '}',
-                        \ 'abbr' : elem,
-                        \ 'menu' : 'complete tex'
-                        \ }
-            return [result]
+            if level == 0
+                let elem = strpart(str, pos + 7, match(str, '}', pos + 7) - pos - 7)
+                let result = { 
+                            \ 'word' : '\end{' . elem . '}',
+                            \ 'abbr' : elem,
+                            \ 'menu' : 'complete tex'
+                            \ }
+                return [result]
+            else
+                let level -= 1
+            endif
         endif
     endfor
     return []
@@ -487,7 +498,7 @@ function! MyUnite(cmd, is_vertical)
     else
         let g:unite_enable_split_vertically = 0
         let g:unite_winwidth = &columns
-        let g:unite_winheight = 20
+        let g:unite_winheight = &lines / 3
         let g:unite_split_rule = 'botright'
     endif
     execute 'Unite ' . a:cmd
@@ -506,6 +517,7 @@ nnoremap <silent> <Space>uu :<C-u>call HUnite('-buffer-name=files -auto-preview 
 nnoremap <silent> <Space>uf :<C-u>UniteWithBufferDir -buffer-name=files file_rec<CR>
 nnoremap <silent> <Space>ur :<C-u>call HUnite('-buffer-name=register register')<CR>
 nnoremap <silent> <Space>uc :<C-u>call VUnite('-auto-preview colorscheme')<CR>
+nnoremap <silent> <Space>UF :<C-u>call VUnite('font')<CR>
 nnoremap <silent> <Space>uh :<C-u>call HUnite('-buffer-name=help help')<CR>
 
 au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
