@@ -462,17 +462,26 @@ noremap! <M-CR> <Esc>:%VimShellSendString<CR>
 
 " unite.vim
 let g:unite_enable_start_insert = 1
-let g:unite_enable_split_vertically = 1
-let g:unite_winwidth = 40
-nnoremap <C-Space> :<C-u>Unite<Space>
-nnoremap <silent> <Space>ub :<C-u>Unite buffer<CR>
-nnoremap <silent> <Space>uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> <Space>ur :<C-u>Unite -buffer-name=register register<CR>
-nnoremap <silent> <Space>um :<C-u>Unite file_mru<CR>
 
-function! SplitAndExchange(split)
-    call unite#do_action(a:split)
+function! HUnite(cmd)
+    let g:unite_enable_split_vertically = 0
+    let g:unite_split_rule = 'botright'
+    execute 'Unite ' . a:cmd
 endfunction
+
+function! VUnite(cmd)
+    let g:unite_enable_split_vertically = 1
+    let g:unite_winwidth = 40
+    let g:unite_split_rule = 'topleft'
+    execute 'Unite ' . a:cmd
+endfunction
+
+nnoremap <C-Space> :<C-u>Unite<Space>
+nnoremap <silent> <Space>uu :<C-u>call HUnite('-buffer-name=files -auto-preview buffer file_rec file_mru')<CR>
+nnoremap <silent> <Space>uf :<C-u>UniteWithBufferDir -buffer-name=files file_rec<CR>
+nnoremap <silent> <Space>ur :<C-u>call HUnite('-buffer-name=register register')<CR>
+nnoremap <silent> <Space>uc :<C-u>call VUnite('-auto-preview colorscheme')<CR>
+nnoremap <silent> <Space>uh :<C-u>call HUnite('-buffer-name=help help')<CR>
 
 au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
 au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
