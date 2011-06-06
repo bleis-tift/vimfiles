@@ -478,17 +478,27 @@ noremap! <M-CR> <Esc>:%VimShellSendString<CR>
 " unite.vim
 let g:unite_enable_start_insert = 1
 
-function! HUnite(cmd)
-    let g:unite_enable_split_vertically = 0
-    let g:unite_split_rule = 'botright'
+function! MyUnite(cmd, is_vertical)
+    if a:is_vertical
+        let g:unite_enable_split_vertically = 1
+        let g:unite_winwidth = 40
+        let g:unite_winheight = &lines
+        let g:unite_split_rule = 'topleft'
+    else
+        let g:unite_enable_split_vertically = 0
+        let g:unite_winwidth = &columns
+        let g:unite_winheight = 20
+        let g:unite_split_rule = 'botright'
+    endif
     execute 'Unite ' . a:cmd
 endfunction
 
+function! HUnite(cmd)
+    call MyUnite(a:cmd, 0)
+endfunction
+
 function! VUnite(cmd)
-    let g:unite_enable_split_vertically = 1
-    let g:unite_winwidth = 40
-    let g:unite_split_rule = 'topleft'
-    execute 'Unite ' . a:cmd
+    call MyUnite(a:cmd, 1)
 endfunction
 
 nnoremap <C-Space> :<C-u>Unite<Space>
