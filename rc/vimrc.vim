@@ -751,6 +751,8 @@ abbr Bundole Bundle
 abbr BundoleInstall BundleInstall
 abbr bundole bundle
 abbr calender calendar
+abbr endfuntion endfunction
+abbr funtion function
 
 " }}}
 
