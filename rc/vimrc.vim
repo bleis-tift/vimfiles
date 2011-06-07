@@ -30,6 +30,7 @@ set shiftwidth=4
 set expandtab
 
 " encoding
+set encoding=utf-8
 set fenc=utf-8
 
 " backup
@@ -56,6 +57,12 @@ nnoremap * :<C-u>set hls<CR>*
 let g:use_xhtml = 1
 let g:html_use_css = 1
 let g:html_no_pre = 1
+let html_use_encoding = "utf-8"
+function! ToHtml()
+    TOhtml
+    setlocal fenc=utf-8
+endfunction
+command! ToHtml call ToHtml()
 " }}}
 
 "================================================================================
@@ -776,3 +783,4 @@ call unite#define_source(s:unite_source)
 unlet s:unite_source
 
 " }}}
+
