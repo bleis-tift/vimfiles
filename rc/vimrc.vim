@@ -30,7 +30,7 @@ set shiftwidth=4
 set expandtab
 
 " encoding
-set encoding=utf-8
+"set encoding=utf-8
 set fenc=utf-8
 
 " backup
@@ -524,7 +524,9 @@ nnoremap <silent> <Space>uu :<C-u>call HUnite('-buffer-name=files -auto-preview 
 nnoremap <silent> <Space>uf :<C-u>UniteWithBufferDir -buffer-name=files file_rec<CR>
 nnoremap <silent> <Space>ur :<C-u>call HUnite('-buffer-name=register register')<CR>
 nnoremap <silent> <Space>uc :<C-u>call VUnite('-auto-preview colorscheme')<CR>
-nnoremap <silent> <Space>UF :<C-u>call VUnite('font')<CR>
+let g:use_unite_font_filter_win32 = 128
+nnoremap <silent> <Space>UF :<C-u>call VUnite('-auto-preview font')<CR>
+"nnoremap <silent> <Space>UF :<C-u>call VUnite('font')<CR>
 nnoremap <silent> <Space>uh :<C-u>call HUnite('-buffer-name=help help')<CR>
 
 au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
