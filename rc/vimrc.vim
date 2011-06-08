@@ -483,11 +483,12 @@ let g:echodoc_enable_at_startup = 1
 let g:vimshell_user_prompt = 'getcwd()'
 let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
 let g:vimshell_split_command = "botright new"
-noremap <Space>sh :<C-u>VimShell<CR>
-noremap <Space>fsi :<C-u>VimShellInteractive fsi<CR>
-noremap <Space>ruby :<C-u>VimShellInteractive irb<CR>
-noremap <Space>rb :<C-u>VimShellInteractive irb<CR>
-noremap <Space>irb :<C-u>VimShellInteractive irb<CR>
+nnoremap <Space>sh :<C-u>VimShell<CR>
+nnoremap <Space>fsi :<C-u>VimShellInteractive fsi<CR>
+nnoremap <Space>scala :<C-u>VimShellInteractive scala<CR>
+nnoremap <Space>ruby :<C-u>VimShellInteractive irb<CR>
+nnoremap <Space>rb :<C-u>VimShellInteractive irb<CR>
+nnoremap <Space>irb :<C-u>VimShellInteractive irb<CR>
 noremap <M-^> :VimShellSendString<CR>
 vmap <M-CR> :VimShellSendString<CR>
 noremap <M-CR> :<C-u>%VimShellSendString<CR>
